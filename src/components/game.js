@@ -9,7 +9,7 @@ export default class Game extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            answer: null,
+            answer: Math.floor(Math.random() * 100) + 1,
             currentGuess: null,
             currentFeedback: 'Make a guess!',
             feedback: ['hot', 'warm', 'cool', 'cold', 'You won!'],
@@ -37,42 +37,63 @@ export default class Game extends React.Component {
         const newGuesses = [...this.state.pastGuesses, guess]
         this.setState({currentGuess: guess})
         this.setState({pastGuesses: newGuesses})
+
+        this.updateFeedBack(guess);
     }
 
-    updateFeedBack() {
-        console.log(this.state.currentFeedback)
-        this.setState({currentFeedback: 'hot'})
-        // const temp = this.state.feedback.map(msg => console.log(msg))
-        // const secretNumber = this.state.answer;
-        // let userFeedback = this.state.currentFeedBack
-        // const secretNumber = Math.floor(Math.random()*100)+1;
-        // const userGuess = this.state.currentGuess;
-        // console.log(userFeedback, secretNumber, userGuess)
-        // if(secretNumber == userGuess){
-        //     userFeedback = 'You Won. Click new game to play again';
-        // } else if(Math.abs(secretNumber - userGuess) < 10){
-        //     userFeedback = 'hot';
-        // } else if(Math.abs(secretNumber - userGuess) < 20 && Math.abs(secretNumber - userGuess) > 9){
-        //     userFeedback = ' Kinda hot';
-        // } else if(Math.abs(secretNumber - userGuess) < 30 && Math.abs(secretNumber - userGuess) > 19){
-        //     userFeedback = 'less than warm';
-        // } else {
-        //     userFeedback = 'cold';
-        // }
-        // function generateNumber(){
-        //     secretNumber = Math.floor(Math.random()*100)+1;
-        // }
+    updateFeedBack(guess) {
+        let answer = this.state.answer;
+        console.log(answer);
+        let result;
+        let index;
+
+        if (guess > answer) {
+            result = guess - answer;
+        }
+
+        else {
+            result = answer - guess;
+        }
+
+        if (result === 0) {
+            index = 4;
+        }
+
+        else if (result <= 10) {
+            index = 0;
+        }
+
+        else if (result <= 20 && result > 10) {
+            index = 1;
+        }
+
+        else if (result <= 50 && result > 20) {
+            index = 2;
+        }
+
+        else if (result > 50) {
+            index = 3;
+        }
+
+        console.log(result);
+
+        let currentFeedback = this.state.feedback[index];
+
+        this.setState({currentFeedback})
     }
+
+    // generateAnswer() {
+    //     let newAnswer = Math.floor(Math.random() * 100) + 1;
+    //     this.setState({answer: newAnswer});
+    // }
 
     render() {
 
-        const temp = this.state.feedback.map(msg => msg)
         return (
             <div>
                 <Header />
-                {this.updateFeedBack}
                 <GuessSection 
-                    feedback={temp} 
+                    feedback={this.state.currentFeedback} 
                     increment={this.incrementCount} 
                     updateCurrentGuess={this.updateCurrentGuess}/>
                 <GuessCount count={this.state.count} />
