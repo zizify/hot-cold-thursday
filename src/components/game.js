@@ -22,16 +22,22 @@ export default class Game extends React.Component {
     }
 
     incrementCount() {
-        // console.log(this.state);
-        let newCount = this.state.count + 1
+        let newCount = this.state.count + 1;
         this.setState({count: newCount})
+    }
+
+    updateCurrentGuess(guess) {
+        this.setState({currentGuess: guess})
     }
 
     render() {
         return (
             <div>
                 <Header />
-                <GuessSection feedback={this.state.currentFeedback} increment={this.incrementCount}/>
+                <GuessSection 
+                    feedback={this.state.currentFeedback} 
+                    increment={this.incrementCount} 
+                    updateCurrentGuess={this.updateCurrentGuess}/>
                 <GuessCount count={this.state.count} />
                 <GuessList guesses={this.state.pastGuesses} />
             </div>
