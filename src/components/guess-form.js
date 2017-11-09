@@ -7,7 +7,8 @@ export default function GuessForm(props) {
     function handleSubmit(e) {
         e.preventDefault();
         props.increment();
-        props.updateCurrentGuess(Number(e.target.userGuess.value));
+        props.updateCurrentGuess(Number(e.target.userGuess.value))
+        e.target.userGuess = '';
     }
     return (
         <form onSubmit={e => {handleSubmit(e)}}>

@@ -21,6 +21,7 @@ export default class Game extends React.Component {
         this.incrementCount = this.incrementCount.bind(this);
         this.updateCurrentGuess = this.updateCurrentGuess.bind(this);
         this.updateFeedBack = this.updateFeedBack.bind(this);
+        this.resetState = this.resetState.bind(this);
     }
 
     incrementCount() {
@@ -82,16 +83,23 @@ export default class Game extends React.Component {
         this.setState({currentFeedback})
     }
 
-    // generateAnswer() {
-    //     let newAnswer = Math.floor(Math.random() * 100) + 1;
-    //     this.setState({answer: newAnswer});
-    // }
+    resetState() {
+        this.setState({
+            answer: Math.floor(Math.random() * 100) + 1,
+            currentGuess: null,
+            currentFeedback: 'Make a guess!',
+            feedback: ['hot', 'warm', 'cool', 'cold', 'You won!'],
+            count: 0,
+            pastGuesses: [],
+            whatView: false
+        })
+    }
 
     render() {
 
         return (
             <div>
-                <Header />
+                <Header reset={this.resetState}/>
                 <GuessSection 
                     feedback={this.state.currentFeedback} 
                     increment={this.incrementCount} 
