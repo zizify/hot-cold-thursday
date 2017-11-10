@@ -5,18 +5,39 @@ import GuessSection from './guess-section';
 import GuessCount  from './guess-count';
 import GuessList from './guess-list';
 
+function newAnswer() {
+  return Math.floor(Math.random() * 100) + 1
+}
+
+function guessFeedback(answer, userGuess) {
+  const value = Math.abs(answer - parseInt(userGuess, 0))
+  if (value > 50) {
+    return 'You Colder'
+  } else if (value > 40) {
+    return 'You Cold'
+  } else if (value > 30) {
+    return 'You warm'
+  } else if (value > 10) {
+    return 'You warmer'
+  } else if (value > 0) {
+    return 'You hot'
+  }
+
+  return 'You won'
+}
+
+
+const initialState = {
+  currentGuess: null,
+  currentFeedback: 'Make a guess!',
+  pastGuesses: [],
+  whatView: false
+}
+
 export default class Game extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            answer: Math.floor(Math.random() * 100) + 1,
-            currentGuess: null,
-            currentFeedback: 'Make a guess!',
-            feedback: ['hot', 'warm', 'cool', 'cold', 'You won!'],
-            count: 0,
-            pastGuesses: [],
-            whatView: false
-        };
+    constructor() {
+        super();
+        this.state = { ...initialState, answer: newAnswer() };
 
         this.incrementCount = this.incrementCount.bind(this);
         this.updateCurrentGuess = this.updateCurrentGuess.bind(this);
@@ -25,74 +46,26 @@ export default class Game extends React.Component {
     }
 
     incrementCount() {
-        let newCount = this.state.pastGuesses.length+1;
-        this.setState({count: newCount})
+        this.setState({count: this.state.pastGuesses.length + 1})
     }
 
     updateCurrentGuess(guess) {
-    //     this.state.pastGuesses.map(num => {
-    //        if(num === guess) {
-    //         return alert('Number already guessed, Pick a new number!')
-    //        }
-    //    }) 
-        const newGuesses = [...this.state.pastGuesses, guess]
-        this.setState({currentGuess: guess})
-        this.setState({pastGuesses: newGuesses})
+      if (this.state.pastGuesses.find(i => i === guess)) {
+        alert(`You have already use the number ${guess}`)
+        return
+      }
+      const newGuesses = [...this.state.pastGuesses, guess]
+      this.setState({pastGuesses: newGuesses, currentGuess: guess})
 
-        this.updateFeedBack(guess);
+      this.updateFeedBack(guess);
     }
 
     updateFeedBack(guess) {
-        let answer = this.state.answer;
-        console.log(answer);
-        let result;
-        let index;
-
-        if (guess > answer) {
-            result = guess - answer;
-        }
-
-        else {
-            result = answer - guess;
-        }
-
-        if (result === 0) {
-            index = 4;
-        }
-
-        else if (result <= 10) {
-            index = 0;
-        }
-
-        else if (result <= 20 && result > 10) {
-            index = 1;
-        }
-
-        else if (result <= 50 && result > 20) {
-            index = 2;
-        }
-
-        else if (result > 50) {
-            index = 3;
-        }
-
-        console.log(result);
-
-        let currentFeedback = this.state.feedback[index];
-
-        this.setState({currentFeedback})
+      this.setState({ currentFeedback: guessFeedback(this.state.answer, guess)})
     }
 
     resetState() {
-        this.setState({
-            answer: Math.floor(Math.random() * 100) + 1,
-            currentGuess: null,
-            currentFeedback: 'Make a guess!',
-            feedback: ['hot', 'warm', 'cool', 'cold', 'You won!'],
-            count: 0,
-            pastGuesses: [],
-            whatView: false
-        })
+        this.setState({ ...initialState, answer: newAnswer() })
     }
 
     render() {
@@ -104,7 +77,7 @@ export default class Game extends React.Component {
                     feedback={this.state.currentFeedback} 
                     increment={this.incrementCount} 
                     updateCurrentGuess={this.updateCurrentGuess}/>
-                <GuessCount count={this.state.count} />
+                <GuessCount count={this.state.pastGuesses.length} />
                 <GuessList guesses={this.state.pastGuesses} />
             </div>
         );
